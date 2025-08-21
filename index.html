@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,49 +8,59 @@
     <title>EV Recharge Bunk</title>
     <script type="module" src="./src/app.js"></script>
     <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
+
 <body>
     <header class="nav">
-    <a href="./index.html" class="brand">
-      <img src="./assets/logo.svg" alt="EV" class="logo" />
-      <span>EV Recharge Bunk</span>
-    </a>
-    <nav class="nav-links">
-      <a href="./index.html">Home</a>
-      <a href="./booking.html">Bookings</a>
-      <a href="./admin.html" id="adminLink" class="hidden">Admin</a>
-      <a href="./login.html" id="loginLink">Login</a>
-      <button id="logoutBtn" class="btn hidden">Logout</button>
-    </nav>
-  </header>
+        <a href="./index.html" class="brand">
+            <img src="./assets/logo.svg" alt="EV" class="logo" />
+            <span>EV Recharge Bunk</span>
+        </a>
+        <nav class="nav-links">
+            <a href="./index.html">Home</a>
+            <a href="./booking.html">Bookings</a>
+            <a href="./admin.html" id="adminLink" class="hidden">Admin</a>
+            <a href="./login.html" id="loginLink">Login</a>
+            <button id="logoutBtn" class="btn hidden">Logout</button>
+        </nav>
+    </header>
 
-  <main class="container">
-    <section class="hero">
-      <div>
-        <h1>Find nearby EV Charging Bunks</h1>
-        <p>Search bunks, view slot availability, and book in seconds.</p>
-        <div class="search-row">
-          <input id="searchInput" type="text" placeholder="Search by bunk name or address..." />
-          <select id="radiusSelect">
-            <option value="2">2 km</option>
-            <option value="5" selected>5 km</option>
-            <option value="10">10 km</option>
-            <option value="25">25 km</option>
-          </select>
-          <button id="locateBtn" class="btn">Use my location</button>
-        </div>
-      </div>
+    <main class="container">
+        <section class="hero">
+            <div>
+                <h1>Find nearby EV Charging Bunks</h1>
+                <p>Search bunks, view slot availability, and book in seconds.</p>
+                <div class="search-row">
+                    <input id="searchInput" type="text" placeholder="Search by bunk name or address..." />
+                    <select id="radiusSelect">
+                        <option value="2">2 km</option>
+                        <option value="5" selected>5 km</option>
+                        <option value="10">10 km</option>
+                        <option value="25">25 km</option>
+                    </select>
+                    <button id="locateBtn" class="btn">Use my location</button>
+                </div>
+            </div>
 
-      <!-- Map container -->
-      <div id="map" class="map"></div>
-    </section>
+            <!-- Map container -->
+            <div id="map" class="map"></div>
+        </section>
 
-    <section class="list">
-      <h2>Nearby Bunks</h2>
-      <div id="bunkList" class="grid"></div>
-    </section>
-  </main>
-  
+        <section class="list">
+            <h2>Nearby Bunks</h2>
+            <div id="bunkList" class="grid"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 EV Recharge Bunk</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Project Script -->
+    <script src="./scripts/main.js"></script>
 </body>
+
 </html>
