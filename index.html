@@ -23,5 +23,33 @@
       <button id="logoutBtn" class="btn hidden">Logout</button>
     </nav>
   </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h1>Find nearby EV Charging Bunks</h1>
+        <p>Search bunks, view slot availability, and book in seconds.</p>
+        <div class="search-row">
+          <input id="searchInput" type="text" placeholder="Search by bunk name or address..." />
+          <select id="radiusSelect">
+            <option value="2">2 km</option>
+            <option value="5" selected>5 km</option>
+            <option value="10">10 km</option>
+            <option value="25">25 km</option>
+          </select>
+          <button id="locateBtn" class="btn">Use my location</button>
+        </div>
+      </div>
+
+      <!-- Map container -->
+      <div id="map" class="map"></div>
+    </section>
+
+    <section class="list">
+      <h2>Nearby Bunks</h2>
+      <div id="bunkList" class="grid"></div>
+    </section>
+  </main>
+  
 </body>
 </html>
