@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking</title>
-    <link rel="stylesheet" href="/styles/booking.css">
+    <link rel="stylesheet" href="/styles/main.css">
     <script type="module" src="/src/booking.js"></script>
 </head>
 
@@ -18,11 +18,18 @@
         <nav class="nav-links">
             <a href="./index.html">Home</a>
             <a href="./booking.html">Bookings</a>
+            <a href="./login.html" id="loginLink">Login</a>
         </nav>
     </header>
 
-    <main class="container">
-        <h1>Book Charging Slot</h1>
+    <main class="container booking-container">
+        <section class="card">
+            <h2>Station</h2>
+            <div id="stationInfo" class="station-info">Loading...</div>
+        </section>
+
+
+        <!-- <h1>Book Charging Slot</h1>
         <div id="stationDetails" class="card"></div>
 
         <form id="bookingForm" class="form">
@@ -36,7 +43,47 @@
         </form>
 
         <p id="statusMsg"></p>
+    </main> -->
+
+        <section class="card">
+            <h2>Book a Slot</h2>
+            <form id="bookingForm" class="booking-form">
+                <div class="form-row">
+                    <label for="dateInput">Date</label>
+                    <input id="dateInput" type="date" required />
+                </div>
+
+                <div class="form-row">
+                    <label for="timeInput">Start time</label>
+                    <input id="timeInput" type="time" required />
+                </div>
+
+                <div class="form-row">
+                    <label for="connectorSelect">Connector</label>
+                    <select id="connectorSelect" required>
+                        <option value="">Select</option>
+                        <option value="AC">AC</option>
+                        <option value="DC">DC</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="vehicleInput">Vehicle number</label>
+                    <input id="vehicleInput" type="text" placeholder="e.g. KA 01 AB 1234" required />
+                </div>
+
+                <button class="btn" type="submit" id="bookBtn">Confirm Booking</button>
+            </form>
+
+            <p id="status" class="status"></p>
+        </section>
     </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 EV Recharge Bunk</p>
+    </footer>
+
+    <script type="module" src="./src/booking.js"></script>
 </body>
 
 </html>

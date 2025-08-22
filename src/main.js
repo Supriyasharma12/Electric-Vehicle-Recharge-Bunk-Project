@@ -1,6 +1,6 @@
-import { db } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 // LEAFLET map
 const map = L.map("map").setView([20.5937, 78.9629], 5);
@@ -21,6 +21,11 @@ let markers = [];
 let bunksData = []; //to store all stations from firestore
 let userLocation = null;
 let radiusCircle = null;
+
+// // Icons 
+// const fastIcon = L.icon({ iconUrl: "./assets/fast.png", iconSize: [36, 36] });
+// const slowIcon = L.icon({ iconUrl: "./assets/slow.png", iconSize: [36, 36] });
+
 
 // ---------------- Utility Functions ------------
 
@@ -45,6 +50,12 @@ function drawRadiusCircle(lat, lng, radiusKm) {
     fillColor: "#bbdefb",
     fillOpacity: 0.18,
   }).addTo(map);
+}
+
+function fitMapToMarkers() {
+  if (markers.length === 0) return;
+  const group = L.featureGroup(markers);
+  map.fitBounds(group.getBounds().pad(0.2));
 }
 
 // ---------------- Display Bunks ---------------
@@ -88,6 +99,7 @@ function displayBunks(list) {
       ${type ? `<em>${type}</em><br/>` : ""}
       ${slots !== null ? `Slots: ${slots}<br/>` : ""}
       ${openHours ? `Hours: ${openHours}<br/>` : ""}
+      <button onclick="window.location.href='booking.html?bunkId=${id}'">Book Now</button>
     `;
 
    const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map).bindPopup(popupHtml);
@@ -109,7 +121,7 @@ function displayBunks(list) {
     bunkList.appendChild(div);
   });
 
-  // add delegated event listeners for Book Now and View
+  // add delegated event listeners for Book Now and View buttons
   bunkList.querySelectorAll(".book-btn").forEach(btn =>
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.dataset.id;
@@ -125,14 +137,15 @@ function displayBunks(list) {
       map.setView([lat, lng], 15);
     })
   );
-  fitMapToMarkers();
+  if(!userLocation) fitMapToMarkers();
 }
 
 // ---------------- Fetch Bunks from Firestore -------------
 
 onSnapshot(collection(db, "bunks"), (snapshot) => {
     bunksData = snapshot.docs.map(doc => ({id: doc.id,...doc.data()}));
-    displayBunks(bunksData);
+    // displayBunks(bunksData);
+    applyFilters();
 });
 
 // ---------------- Filters ---------------
@@ -301,3 +314,20 @@ searchInput.addEventListener("input", applyFilters);
 // });
 
 
+const loginLink = document.getElementById("loginLink");
+const logoutBtn = document.getElementById("logoutBtn");
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loginLink.classList.add("hidden");
+    logoutBtn.classList.remove("hidden");
+  } else {
+    loginLink.classList.remove("hidden");
+    logoutBtn.classList.add("hidden");
+  }
+});
+
+logoutBtn.addEventListener("click", async () => {
+  await signOut(auth);
+  alert("Logged out!");
+});
