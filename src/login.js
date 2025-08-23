@@ -1,11 +1,9 @@
-import { auth, db } from "./firebase.js";
-// src/login.js
 import { auth } from "./firebase.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = document.getElementById("loginEmail").value;
+  const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
 
   try {
@@ -13,6 +11,6 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     alert("Login successful!");
     window.location.href = "index.html"; // Redirect after login
   } catch (error) {
-    alert(error.message);
+    alert(error.message || "login failed.");
   }
 });

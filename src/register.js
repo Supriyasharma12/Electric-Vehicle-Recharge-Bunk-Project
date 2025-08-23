@@ -1,18 +1,27 @@
+// src/register.js
 import { auth, db } from "./firebase.js";
-// src/login.js
-import { auth } from "./firebase.js";
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const name = document.getElementById("name").value.trim();
+  const mobile = document.getElementById("mobile").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value;
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    alert("Login successful!");
-    window.location.href = "index.html"; // Redirect after login
-  } catch (error) {
-    alert(error.message);
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(cred.user, { displayName: name });
+
+    await setDoc(doc(db, "users", cred.user.uid), {
+      name, mobile, email,
+      role: "user",
+      createdAt: serverTimestamp(),
+    });
+
+    window.location.href = "index.html";
+  } catch (err) {
+    alert(err.message);
   }
 });

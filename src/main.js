@@ -1,14 +1,15 @@
 import { auth, db } from "./firebase.js";
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { collection, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
+const adminLink = document.getElementById("adminLink");
 // LEAFLET map
 const map = L.map("map").setView([20.5937, 78.9629], 5);
 
 // OpenStreetMap tiles
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
 }).addTo(map);
 
 const locateBtn = document.getElementById("locateBtn");
@@ -22,9 +23,9 @@ let bunksData = []; //to store all stations from firestore
 let userLocation = null;
 let radiusCircle = null;
 
-// // Icons 
-// const fastIcon = L.icon({ iconUrl: "./assets/fast.png", iconSize: [36, 36] });
-// const slowIcon = L.icon({ iconUrl: "./assets/slow.png", iconSize: [36, 36] });
+// Icons 
+const fastIcon = L.icon({ iconUrl: "./assets/fast.png", iconSize: [36, 36] });
+const slowIcon = L.icon({ iconUrl: "./assets/slow.png", iconSize: [36, 36] });
 
 
 // ---------------- Utility Functions ------------
@@ -71,38 +72,25 @@ function displayBunks(list) {
   }
 
   list.forEach(bunk => {
-//     const lat = bunk.lat;
-//     const lng = bunk.lng;
-//     const title = bunk.name || "Unnamed station";
-//     const address = bunk.address || "";
-//     const type = bunk.type || "";
-//     const slots = (typeof bunk.slots !== "undefined") ? bunk.slots : null;
-//     const openHours = bunk.openHours || "";
-
-//     const fastIcon = L.icon({ iconUrl: '/assets/fast.png', iconSize: [36,36] });
-// const slowIcon = L.icon({ iconUrl: '/assets/slow.png', iconSize: [36,36] });
-
-// const markerIcon = bunk.type === 'Fast Charger' ? fastIcon : slowIcon;
-    
     const { lat, lng, name, address, type, slots, openHours, id } = bunk;
-
     // Define icon based on type
-    const fastIcon = L.icon({ iconUrl: '/assets/fast.png', iconSize: [36,36] });
-    const slowIcon = L.icon({ iconUrl: '/assets/slow.png', iconSize: [36,36] });
+    // const fastIcon = L.icon({ iconUrl: '/assets/fast.png', iconSize: [36, 36] });
+    // const slowIcon = L.icon({ iconUrl: '/assets/slow.png', iconSize: [36, 36] });
     const markerIcon = type === 'Fast Charger' ? fastIcon : slowIcon;
-
 
     // add marker
     const popupHtml = `
-      <strong>${title}</strong><br/>
+    <div>
+      <strong>${name}</strong><br/>
       ${address}<br/>
       ${type ? `<em>${type}</em><br/>` : ""}
-      ${slots !== null ? `Slots: ${slots}<br/>` : ""}
+      ${Number.isFinite(slots) ? `Slots: ${slots}<br/>` : ""}
       ${openHours ? `Hours: ${openHours}<br/>` : ""}
-      <button onclick="window.location.href='booking.html?bunkId=${id}'">Book Now</button>
-    `;
+      <a href="booking.html?bunkId=${id}" class="btn">Book Now</a>
+    </div>
+    `;    //<button onclick="window.location.href='booking.html?bunkId=${id}'">Book Now</button>
 
-   const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map).bindPopup(popupHtml);
+    const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map).bindPopup(popupHtml);
     markers.push(marker);
 
     // add card to list
@@ -112,7 +100,7 @@ function displayBunks(list) {
       <h3>${name || "unnamed station"}</h3>
       <p class="address">${address || ""}</p>
       ${type ? `<p class="meta">Type: ${type}</p>` : ""}
-      ${slots !== null ? `<p class="meta">Slots: ${slots}</p>` : ""}
+      ${Number.isFinite(slots) ? `<p class="meta">Slots: ${slots}</p>` : ""}
       <div class="card-actions">
         <button class="btn book-btn" data-id="${bunk.id}">Book Now</button>
         <button class="btn view-map-btn" data-lat="${lat}" data-lng="${lng}">View</button>
@@ -135,24 +123,29 @@ function displayBunks(list) {
       const lat = parseFloat(e.currentTarget.dataset.lat);
       const lng = parseFloat(e.currentTarget.dataset.lng);
       map.setView([lat, lng], 15);
+      const mk = markers.find(m => Math.abs(m.getLatLng().lat - lat) < 1e-6 && Math.abs(m.getLatLng().lng - lng) < 1e-6);
+      if (mk) mk.openPopup();
     })
   );
-  if(!userLocation) fitMapToMarkers();
+  if (!userLocation) fitMapToMarkers();
 }
 
 // ---------------- Fetch Bunks from Firestore -------------
 
 onSnapshot(collection(db, "bunks"), (snapshot) => {
-    bunksData = snapshot.docs.map(doc => ({id: doc.id,...doc.data()}));
-    // displayBunks(bunksData);
-    applyFilters();
+  bunksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  // displayBunks(bunksData);
+  applyFilters();
+  }, (err) => {
+  console.error("Failed to load bunks:", err);
+  bunkList.innerHTML = "<p class='no-results'>Failed to load stations.</p>";
 });
+
 
 // ---------------- Filters ---------------
 
 function applyFilters() {
   let filtered = bunksData.slice();
-
   // Radius filter
   if (userLocation) {
     const radius = parseFloat(radiusSelect.value);
@@ -162,9 +155,12 @@ function applyFilters() {
       );
       drawRadiusCircle(userLocation.lat, userLocation.lng, radius);
     }
+  }else if (radiusCircle) {
+    map.removeLayer(radiusCircle);
+    radiusCircle = null;
   }
-  
-// Search filter
+
+  // Search filter
   const query = searchInput.value.trim().toLowerCase();
   if (query) {
     filtered = filtered.filter(b =>
@@ -172,7 +168,6 @@ function applyFilters() {
       (b.address && b.address.toLowerCase().includes(query))
     );
   }
-
   displayBunks(filtered);
 }
 
@@ -191,7 +186,11 @@ locateBtn.addEventListener("click", () => {
         .openPopup();
       applyFilters();
     },
-    () => alert("Unable to fetch your location.")
+     (err) => {
+      console.error("Geolocation error", err);
+      alert("Unable to fetch your location. Make sure location is enabled.");
+    },
+    { enableHighAccuracy: true }
   );
 });
 
@@ -200,134 +199,66 @@ radiusSelect.addEventListener("change", () => {
   applyFilters();
 });
 
-searchInput.addEventListener("input", applyFilters);
-
-
-
-
-// function filterNearbyBunks(userLat, userLng, radiusKm) {
-//     const nearby = bunksData.filter(bunk => {
-//         const d = getDistance(userLat, userLng, bunk.lat, bunk.lng);
-//         return d <= radiusKm;
-//     });
-//     displayBunks(nearby);
-// }
-
-
-// // Locating user on button click
-// locateBtn.addEventListener("click", () => {
-//     if (navigator.geolocation) {
-//         navigator.geolocation.getCurrentPosition(
-//             (pos) => {
-//                 const { latitude, longitude } = pos.coords;
-//                 userLocation = { lat: latitude, lng: longitude };
-//                 map.setView([latitude, longitude], 14);
-
-//                 // Mark user location
-//                 L.marker([latitude, longitude], { title: "You are here" })
-//                     .addTo(map)
-//                     .bindPopup("You are here")
-//                     .openPopup();
-
-//                     // draw circle based on current radius
-// const selectedRadiusNow = parseFloat(radiusSelect.value) || 5; // default 5
-// drawRadiusCircle(userLocation.lat, userLocation.lng, selectedRadiusNow);
-
-// // apply combined filters (search + radius)
-// applyFilters();
-
-//             },
-//             () => {
-//                 alert("Unable to fetch your location.");
-//             }
-//         );
-//     } else {
-//         alert("Geolocation not supported by your browser.");
-//     }
-// });
-
-// // ----- Radius filter
-// radiusSelect.addEventListener("change", () => {
-//   if (!userLocation) {
-//     alert("Please locate yourself first.");
-//     return;
-//   }
-
-//   const selectedRadius = parseFloat(radiusSelect.value); // e.g., 5, 10, 20
-//   if (isNaN(selectedRadius)) {
-//     displayBunks(bunksData); // If "All" is selected, show all
-//     return;
-//   }
-
-// //   const filtered = bunksData.filter((bunk) => {
-// //     const distance = getDistance(
-// //       userLocation.lat,
-// //       userLocation.lng,
-// //       bunk.lat,
-// //       bunk.lng
-// //     );
-// //     return distance <= selectedRadius;
-// //   });
-
-// //   displayBunks(filtered);
-//  const selectedRadius = parseFloat(radiusSelect.value);
-//   drawRadiusCircle(userLocation.lat, userLocation.lng, selectedRadius);
-//   applyFilters();
-// });
-
-// function applyFilters() {
-//   let filtered = bunksData.slice();
-
-//   // radius filter
-//   if (userLocation) {
-//     const radius = parseFloat(radiusSelect.value);
-//     if (!isNaN(radius)) {
-//       filtered = filtered.filter(b => {
-//         const d = getDistance(userLocation.lat, userLocation.lng, b.lat, b.lng);
-//         return d <= radius;
-//       });
-//     }
-//   }
-
-//   // search filter
-//   const q = searchInput.value.trim().toLowerCase();
-//   if (q) {
-//     filtered = filtered.filter(b =>
-//       (b.name && b.name.toLowerCase().includes(q)) ||
-//       (b.address && b.address.toLowerCase().includes(q))
-//     );
-//   }
-
-//   displayBunks(filtered);
-// }
-
-
-// // Searching bunks by name or address
-// searchInput.addEventListener("input", () => {
-//     const query = searchInput.value.toLowerCase();
-//     const filtered = bunksData.filter(
-//         bunk =>
-//             bunk.name.toLowerCase().includes(query) ||
-//             bunk.address.toLowerCase().includes(query)
-//     );
-//     displayBunks(filtered);
-// });
-
+let debounceTimer;
+searchInput.addEventListener("input", () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(applyFilters, 200);
+});
 
 const loginLink = document.getElementById("loginLink");
 const logoutBtn = document.getElementById("logoutBtn");
 
-onAuthStateChanged(auth, (user) => {
+// Auth UI logic
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     loginLink.classList.add("hidden");
     logoutBtn.classList.remove("hidden");
+    // check role
+    try {
+      const udoc = await db.getDoc?.(db.doc?.())
+    } catch (e) {
+      // ignore — we will do a safer check using getDoc below
+    }
+    try {
+      const { doc: docFn, getDoc } = await import("https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js");
+    } catch (e) { }
+    // simple role check (read users/{uid}.role)
+    try {
+      const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js");
+      const uref = doc(db, "users", user.uid);
+      const usnap = await getDoc(uref);
+      const role = usnap.exists() ? usnap.data().role : "user";
+      if (role === "admin") adminLink.classList.remove("hidden");
+    } catch (err) {
+      // fail silently
+    }
   } else {
     loginLink.classList.remove("hidden");
     logoutBtn.classList.add("hidden");
+    adminLink.classList.add("hidden");
   }
 });
 
 logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
-  alert("Logged out!");
+  try {
+    await signOut(auth);
+    window.location.reload();
+  } catch (e) {
+    console.error("Sign out error:", e);
+    alert("Could not sign out, try again.");
+  }
 });
+
+bunkList.querySelectorAll(".view-map-btn").forEach(btn =>
+  btn.addEventListener("click", (e) => {
+    const lat = parseFloat(e.currentTarget.dataset.lat);
+    const lng = parseFloat(e.currentTarget.dataset.lng);
+    map.setView([lat, lng], 15);
+    // Optionally find the marker and open its popup
+    const mk = markers.find(m => {
+      const p = m.getLatLng();
+      return Math.abs(p.lat - lat) < 1e-6 && Math.abs(p.lng - lng) < 1e-6;
+    });
+    if (mk) mk.openPopup();
+  })
+);
