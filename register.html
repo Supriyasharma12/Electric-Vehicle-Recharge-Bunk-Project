@@ -1,24 +1,23 @@
+<!-- signup.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - EV Recharge Bunk</title>
-  <link rel="stylesheet" href="./styles/main.css">
-  <script type="module" src="./src/signup.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign up - EV Recharge Bunk</title>
+  <link rel="stylesheet" href="./styles/main.css" />
+  <script type="module" src="src/register.js"></script>
 </head>
-<body>
-  <header class="nav">
-    <a href="./index.html" class="brand">EV Recharge Bunk</a>
-  </header>
-
+<body class="auth-page">
   <main class="container">
     <section class="auth-container">
-      <h2>Sign Up</h2>
+      <h2>Sign up</h2>
       <form id="signupForm">
-        <input type="email" id="signupEmail" placeholder="Email" required>
-        <input type="password" id="signupPassword" placeholder="Password" required>
-        <button type="submit" class="btn">Sign Up</button>
+        <input type="text" id="name" placeholder="Full name" required />
+        <input type="tel" id="mobile" placeholder="Mobile (optional)" />
+        <input type="email" id="signupEmail" placeholder="Email" required />
+        <input type="password" id="signupPassword" placeholder="Password" required />
+        <button type="submit" class="btn">Create account</button>
       </form>
       <p>Already have an account? <a href="./login.html">Login</a></p>
     </section>

@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking</title>
     <link rel="stylesheet" href="/styles/main.css">
-    <script type="module" src="/src/booking.js"></script>
 </head>
 
 <body>
@@ -19,31 +18,15 @@
             <a href="./index.html">Home</a>
             <a href="./booking.html">Bookings</a>
             <a href="./login.html" id="loginLink">Login</a>
+            <button id="logoutBtn" class="btn hidden">Logout</button>
         </nav>
     </header>
 
     <main class="container booking-container">
         <section class="card">
-            <h2>Station</h2>
-            <div id="stationInfo" class="station-info">Loading...</div>
+            <h2>Station Details</h2>
+            <div id="stationInfo" class="station-info">Loading station details...</div>
         </section>
-
-
-        <!-- <h1>Book Charging Slot</h1>
-        <div id="stationDetails" class="card"></div>
-
-        <form id="bookingForm" class="form">
-            <label for="vehicleNumber">Vehicle Number:</label>
-            <input type="text" id="vehicleNumber" required />
-
-            <label for="timeSlot">Select Time Slot:</label>
-            <input type="datetime-local" id="timeSlot" required />
-
-            <button type="submit" class="btn">Confirm Booking</button>
-        </form>
-
-        <p id="statusMsg"></p>
-    </main> -->
 
         <section class="card">
             <h2>Book a Slot</h2>
@@ -77,12 +60,19 @@
 
             <p id="status" class="status"></p>
         </section>
+
+        <!-- My Bookings -->
+    <section class="card">
+      <h2>My Bookings</h2>
+      <div id="myBookings">Loading your bookings...</div>
+    </section>
     </main>
 
     <footer class="footer">
         <p>&copy; 2025 EV Recharge Bunk</p>
     </footer>
 
+    <script type="module" src="./scripts/firebase.js"></script>
     <script type="module" src="./src/booking.js"></script>
 </body>
 

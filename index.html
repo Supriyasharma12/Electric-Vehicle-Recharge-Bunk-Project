@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/main.css">
     <title>EV Recharge Bunk</title>
-    <script type="module" src="./src/main.js"></script>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
@@ -28,7 +27,7 @@
 
     <main class="container">
         <section class="hero">
-            <div>
+            <div class="hero-left">
                 <h1>Find nearby EV Charging Bunks</h1>
                 <p>Search bunks, view slot availability, and book in seconds.</p>
                 <div class="search-row">
@@ -60,7 +59,9 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <!-- Project Script -->
-    <script src="./src/main.js"></script>
+    <script type="module" src="./src/main.js"></script>
+    <!-- firebase configration -->
+     <script type="module" src="./src/firebase.js"></script>
 </body>
 
 </html>
