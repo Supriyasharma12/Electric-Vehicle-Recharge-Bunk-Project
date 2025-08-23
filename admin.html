@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EV Admin Panel</title>
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="./index.html" class="brand">EV Recharge Bunk</a>
+    <nav class="nav-links">
+      <a href="./booking.html">Bookings</a>
+      <a href="./admin.html" class="active">Admin Panel</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Admin Panel – Manage Bunks & Slots</h2>
+
+    <!-- Add EV Bunk Form -->
+    <section class="card">
+      <h3>Add EV Bunk</h3>
+      <form id="addBunkForm">
+        <input type="text" id="bunkName" placeholder="Bunk Name" required>
+        <input type="text" id="bunkAddress" placeholder="Bunk Address" required>
+        <input type="text" id="bunkLocation" placeholder="Google Map Link" required>
+        <input type="number" id="totalSlots" placeholder="Total Slots" required min="1">
+        <button type="submit">Add Bunk</button>
+      </form>
+    </section>
+
+    <!-- Manage Slots -->
+    <section class="card">
+      <h3>Manage Slots</h3>
+      <div id="bunksList"></div>
+    </section>
+  </main>
+
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
