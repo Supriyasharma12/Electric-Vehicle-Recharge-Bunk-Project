@@ -20,7 +20,7 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
       createdAt: serverTimestamp(),
     });
 
-    window.location.href = "index.html";
+    window.location.href = "booking.html";
   } catch (err) {
     alert(err.message);
   }

@@ -4,6 +4,7 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 
 const adminLink = document.getElementById("adminLink");
 // LEAFLET map
+
 const map = L.map("map").setView([20.5937, 78.9629], 5);
 
 // OpenStreetMap tiles
@@ -11,6 +12,8 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
 }).addTo(map);
+
+
 
 const locateBtn = document.getElementById("locateBtn");
 const searchInput = document.getElementById("searchInput");
@@ -262,3 +265,6 @@ bunkList.querySelectorAll(".view-map-btn").forEach(btn =>
     if (mk) mk.openPopup();
   })
 );
+
+
+
