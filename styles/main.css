@@ -93,35 +93,9 @@ a{color:inherit;text-decoration:none}
 }
 .status{margin-top:10px; color:#9ad69a}
 
-/* Auth Pages */
-/* body.auth-page {
-  display:flex; justify-content:center; align-items:center;
-  height:100vh; margin:0; background:#f4f7fa;
-}
-.auth-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 350px;
-  max-width: 90%;
-  text-align: center;
-}
-.auth-container h1 { margin-bottom: 1.5rem; font-size: 1.8rem; color:#111; }
-.auth-container form { display: flex; flex-direction: column; gap: 1rem; }
-.auth-container input {
-  padding: 0.8rem; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem;
-}
-.auth-container .btn {
-  background: #007bff; color: white; padding: 0.8rem; border-radius: 8px;
-}
-.auth-container .btn:hover { background: #0056b3; }
-.auth-container p { margin-top: 1rem; font-size: 0.9rem; }
-.auth-container a { color: #007bff; } */
-
-/* =========================
+/*
    Auth Pages (Login / Register)
-========================= */
+*/
 body.auth-page {
   display: flex;
   justify-content: center;
@@ -313,3 +287,5 @@ body.auth-page {
   margin-top: -6px;
   text-align: left;
 }
+
+
